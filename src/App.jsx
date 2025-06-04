@@ -8,6 +8,10 @@ import { Separator } from '@/components/ui/separator.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, UserCheck, Medal } from 'lucide-react'
 import './App.css'
+import AdminView from '@/views/AdminView.jsx'
+import JoueurView from '@/views/JoueurView.jsx'
+import ArchivesView from '@/views/ArchivesView.jsx'
+import PartieCard from '@/components/PartieCard.jsx'
 
 function App() {
   const [currentView, setCurrentView] = useState('home')
@@ -406,173 +410,7 @@ function App() {
     )
   }
 
-  const renderJoueurView = () => (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => setCurrentView('home')}>
-            ← Retour
-          </Button>
-          <h1 className="text-xl font-bold">Classement</h1>
-          <div></div>
-        </div>
 
-        {!concours ? (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">
-                Aucun concours en cours
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>{concours.nom}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {equipes.length === 0 ? (
-                  <p className="text-muted-foreground">Aucune équipe créée</p>
-                ) : (
-                  equipes
-                    .sort((a, b) => b.victoires - a.victoires || b.points - a.points)
-                    .map((equipe, index) => (
-                      <div key={equipe.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Badge variant={index < 3 ? "default" : "outline"}>
-                            {index + 1}
-                          </Badge>
-                          <div>
-                            <p className="font-medium">{equipe.nom}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {equipe.joueurs.join(', ')}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold">{equipe.victoires} pts</p>
-                          <p className="text-sm text-muted-foreground">
-                            {equipe.points} buts
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-  )
-
-  const renderAdminView = () => (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => {setCurrentView('home'); setIsArbitre(false)}}>
-            ← Déconnexion
-          </Button>
-          <h1 className="text-xl font-bold">Administration</h1>
-          <Crown className="w-6 h-6 text-primary" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            onClick={() => setCurrentView('joueurs')} 
-            className="h-20 flex-col"
-            variant="outline"
-          >
-            <Users className="w-6 h-6 mb-2" />
-            Joueurs
-          </Button>
-          
-          <Button 
-            onClick={() => setCurrentView('concours')} 
-            className="h-20 flex-col"
-            variant="outline"
-          >
-            <Trophy className="w-6 h-6 mb-2" />
-            Concours
-          </Button>
-          
-          <Button 
-            onClick={() => setCurrentView('equipes')} 
-            className="h-20 flex-col"
-            variant="outline"
-          >
-            <Play className="w-6 h-6 mb-2" />
-            Équipes
-          </Button>
-          
-          <Button 
-            onClick={() => setCurrentView('archives')} 
-            className="h-20 flex-col"
-            variant="outline"
-          >
-            <Archive className="w-6 h-6 mb-2" />
-            Archives
-          </Button>
-        </div>
-
-        {/* Avertissement synchronisation */}
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-4">
-            <div className="flex items-start space-x-2">
-              <div className="w-4 h-4 rounded-full bg-orange-500 mt-0.5 flex-shrink-0"></div>
-              <div className="text-sm">
-                <p className="font-medium text-orange-800">Information importante</p>
-                <p className="text-orange-700">
-                  Les données sont stockées localement sur chaque appareil. 
-                  Pour que tous les joueurs voient les mêmes informations, 
-                  ils doivent utiliser le même appareil ou navigateur.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {concours && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Concours actuel</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <p className="font-medium">{concours.nom}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(concours.date).toLocaleDateString('fr-FR')}
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span>Équipes: {equipes.length}</span>
-                    <span>Parties: {concours.nombreParties}</span>
-                  </div>
-                  {parties.length > 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      Partie en cours: {partieActuelle + 1}/{concours.nombreParties}
-                    </div>
-                  )}
-                </div>
-                
-                {equipes.length > 0 && parties.length > 0 && (
-                  <Button 
-                    onClick={() => setCurrentView('parties')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Reprendre les parties
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-  )
 
   const renderJoueursView = () => (
     <div className="min-h-screen bg-background p-4">
@@ -1059,9 +897,9 @@ function App() {
             ) : (
               <div className="space-y-4">
                 {parties.map((partie) => (
-                  <PartieCard 
-                    key={partie.id} 
-                    partie={partie} 
+                  <PartieCard
+                    key={partie.id}
+                    partie={partie}
                     onEnregistrerScore={enregistrerScore}
                   />
                 ))}
@@ -1159,199 +997,16 @@ function App() {
     </div>
   )
 
-  // Composant pour afficher une partie
-  const PartieCard = ({ partie, onEnregistrerScore }) => {
-    const [score1, setScore1] = useState(partie.score1 === 0 ? '' : partie.score1.toString())
-    const [score2, setScore2] = useState(partie.score2 === 0 ? '' : partie.score2.toString())
 
-    const handleEnregistrer = () => {
-      onEnregistrerScore(partie.id, score1, score2)
-    }
-
-    return (
-      <div className="border rounded-lg p-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium">Partie {partie.numero}</h3>
-          <Badge variant={partie.statut === 'terminee' ? 'default' : 'outline'}>
-            {partie.statut === 'terminee' ? 'Terminée' : 'En cours'}
-          </Badge>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 items-center">
-          {/* Équipe 1 */}
-          <div className="text-center">
-            <p className="font-medium text-sm">{partie.equipe1.nom}</p>
-            <div className="text-xs text-muted-foreground">
-              {partie.equipe1.joueurs.join(', ')}
-            </div>
-          </div>
-          
-          {/* VS */}
-          <div className="text-center">
-            <p className="text-lg font-bold">VS</p>
-          </div>
-          
-          {/* Équipe 2 */}
-          <div className="text-center">
-            <p className="font-medium text-sm">{partie.equipe2.nom}</p>
-            <div className="text-xs text-muted-foreground">
-              {partie.equipe2.joueurs.join(', ')}
-            </div>
-          </div>
-        </div>
-
-        {partie.statut === 'terminee' ? (
-          <div className="grid grid-cols-3 gap-4 items-center">
-            <div className="text-center">
-              <div className="text-2xl font-bold">{partie.score1}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm text-muted-foreground">Score final</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold">{partie.score2}</div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="grid grid-cols-3 gap-4 items-center">
-              <Input
-                type="number"
-                placeholder="Score"
-                value={score1}
-                onChange={(e) => setScore1(e.target.value)}
-                min="0"
-              />
-              <div className="text-center text-sm text-muted-foreground">
-                Scores
-              </div>
-              <Input
-                type="number"
-                placeholder="Score"
-                value={score2}
-                onChange={(e) => setScore2(e.target.value)}
-                min="0"
-              />
-            </div>
-            
-            <Button 
-              onClick={handleEnregistrer}
-              className="w-full"
-              disabled={!score1 || !score2}
-            >
-              <Trophy className="w-4 h-4 mr-2" />
-              Enregistrer le score
-            </Button>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  const renderArchivesView = () => {
-    const supprimerArchive = (index) => {
-      const nouvellesArchives = archives.filter((_, i) => i !== index)
-      setArchives(nouvellesArchives)
-    }
-
-    return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <Button 
-              onClick={() => setCurrentView('admin')}
-              variant="outline"
-              className="flex items-center space-x-2"
-            >
-              <span>← Retour</span>
-            </Button>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <Archive className="w-6 h-6" />
-              <span>Archives</span>
-            </h1>
-            <div className="w-20"></div>
-          </div>
-
-          {archives.length === 0 ? (
-            <Card>
-              <CardContent className="text-center py-8">
-                <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Aucune archive</h3>
-                <p className="text-muted-foreground">Les concours terminés apparaîtront ici</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {archives.map((archive, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center space-x-2">
-                        <Trophy className="w-5 h-5" />
-                        <span>{archive.nom}</span>
-                      </CardTitle>
-                      <Button
-                        onClick={() => supprimerArchive(index)}
-                        variant="destructive"
-                        size="sm"
-                        className="flex items-center space-x-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        <span>Supprimer</span>
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Date</span>
-                        <span>{new Date(archive.date).toLocaleDateString('fr-FR')}</span>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <h4 className="font-medium flex items-center space-x-2">
-                          <Crown className="w-4 h-4" />
-                          <span>Classement final</span>
-                        </h4>
-                        {archive.classementFinal.map((equipe, pos) => (
-                          <div key={pos} className="flex items-center justify-between p-3 border rounded-lg">
-                            <div className="flex items-center space-x-3">
-                              <Badge variant={pos < 3 ? "default" : "outline"} className="w-8 h-8 rounded-full flex items-center justify-center">
-                                {pos + 1}
-                              </Badge>
-                              <div>
-                                <p className="font-medium">{equipe.nom}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {equipe.joueurs.join(', ')}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-medium">{equipe.victoires} pts</div>
-                              <div className="text-sm text-muted-foreground">{equipe.points} buts</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
 
   // Rendu conditionnel basé sur la vue actuelle
   switch (currentView) {
     case 'home':
       return renderHome()
     case 'joueur':
-      return renderJoueurView()
+      return <JoueurView setCurrentView={setCurrentView} concours={concours} equipes={equipes} />
     case 'admin':
-      return renderAdminView()
+      return <AdminView setCurrentView={setCurrentView} setIsArbitre={setIsArbitre} concours={concours} equipes={equipes} parties={parties} partieActuelle={partieActuelle} />
     case 'joueurs':
       return renderJoueursView()
     case 'concours':
@@ -1361,11 +1016,11 @@ function App() {
     case 'parties':
       return renderPartiesView()
     case 'archives':
-      return renderArchivesView()
+      return <ArchivesView archives={archives} setArchives={setArchives} setCurrentView={setCurrentView} />
     default:
       return renderHome()
   }
-}
+  }
 
 export default App
 
