@@ -29,7 +29,8 @@ function App() {
   const [expandedArchive, setExpandedArchive] = useState(null)
 
   // Mot de passe arbitre via variable d'environnement
-  const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
+  const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD
+  const adminEnabled = ARBITRE_PASSWORD !== undefined && ARBITRE_PASSWORD !== ''
 
   // Chargement des données depuis localStorage
   useEffect(() => {
@@ -68,6 +69,10 @@ function App() {
   }, [archives])
 
   const handleArbitreLogin = () => {
+    if (!adminEnabled) {
+      alert('Accès arbitre indisponible: VITE_ARBITRE_PASSWORD manquant')
+      return
+    }
     if (password === ARBITRE_PASSWORD) {
       setIsArbitre(true)
       setCurrentView('admin')
@@ -206,17 +211,19 @@ function App() {
           
           {/* Icône d'accès arbitre */}
           <div className="relative">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
-              onClick={() => setShowArbitreLogin(!showArbitreLogin)}
+              onClick={() => adminEnabled && setShowArbitreLogin(!showArbitreLogin)}
               className="p-2"
+              disabled={!adminEnabled}
+              title={adminEnabled ? undefined : 'VITE_ARBITRE_PASSWORD manquant'}
             >
               <Settings className="w-5 h-5" />
             </Button>
-            
+
             {/* Menu déroulant pour l'accès arbitre */}
-            {showArbitreLogin && (
+            {adminEnabled && showArbitreLogin && (
               <Card className="absolute right-0 top-12 w-64 z-10 shadow-lg">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm">Accès Arbitre</CardTitle>
@@ -240,6 +247,12 @@ function App() {
             )}
           </div>
         </div>
+
+        {!adminEnabled && (
+          <p className="text-center text-destructive text-sm mt-2">
+            Variable VITE_ARBITRE_PASSWORD non définie – accès arbitre désactivé
+          </p>
+        )}
 
         {/* Affichage direct du classement */}
         <div className="space-y-4">
