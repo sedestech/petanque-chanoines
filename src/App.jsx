@@ -28,8 +28,8 @@ function App() {
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
 
-  // Mot de passe arbitre (codé en dur comme demandé)
-  const ARBITRE_PASSWORD = 'chanoine2024'
+  // Mot de passe arbitre via variable d'environnement
+  const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
 
   // Chargement des données depuis localStorage
   useEffect(() => {
@@ -235,7 +235,6 @@ function App() {
                       <Settings className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Mot de passe: chanoine2024</p>
                 </CardContent>
               </Card>
             )}

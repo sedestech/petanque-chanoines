@@ -6,9 +6,10 @@ This project is a React application that uses Vite and Supabase.
 
 - **Node.js** (version 18 or later is recommended)
 - **pnpm** package manager
-- Supabase credentials via the following environment variables:
+- Application credentials via the following environment variables:
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_ARBITRE_PASSWORD`
 
 You can place these variables in a `.env` file at the project root.
 
