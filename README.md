@@ -30,3 +30,7 @@ The `package.json` defines a few scripts that can be run with pnpm:
 - `pnpm run build` – create a production build in the `dist` directory
 - `pnpm run preview` – serve the production build locally
 
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
