@@ -1,10 +1,14 @@
 
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Archive, Trophy, Crown, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge.jsx'
+import { Modal } from '@/components/ui/modal.jsx'
 
 function ArchivesView({ archives, setArchives, setCurrentView }) {
+  const [archiveASupprimer, setArchiveASupprimer] = useState(null)
+
   const supprimerArchive = (index) => {
     const nouvellesArchives = archives.filter((_, i) => i !== index)
     setArchives(nouvellesArchives)
@@ -43,7 +47,12 @@ function ArchivesView({ archives, setArchives, setCurrentView }) {
                       <Trophy className="w-5 h-5" />
                       <span>{archive.nom}</span>
                     </CardTitle>
-                    <Button onClick={() => supprimerArchive(index)} variant="destructive" size="sm" className="flex items-center space-x-1">
+                    <Button
+                      onClick={() => setArchiveASupprimer(index)}
+                      variant="destructive"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                    >
                       <Trash2 className="w-4 h-4" />
                       <span>Supprimer</span>
                     </Button>
@@ -83,6 +92,40 @@ function ArchivesView({ archives, setArchives, setCurrentView }) {
               </Card>
             ))}
           </div>
+        )}
+
+        {archiveASupprimer !== null && (
+          <Modal open={archiveASupprimer !== null} onClose={() => setArchiveASupprimer(null)}>
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle>
+                  Supprimer {archives[archiveASupprimer].nom} ?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p>Cette action est irréversible.</p>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      supprimerArchive(archiveASupprimer)
+                      setArchiveASupprimer(null)
+                    }}
+                    className="flex-1"
+                  >
+                    Supprimer
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setArchiveASupprimer(null)}
+                    className="flex-1"
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </Modal>
         )}
       </div>
     </div>
