@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Users, Plus, Edit, Trash2 } from 'lucide-react'
+import { Modal } from '@/components/ui/modal.jsx'
 
 export default function JoueursView({
   joueurs,
@@ -95,35 +96,40 @@ export default function JoueursView({
           </CardContent>
         </Card>
         {editingJoueur && (
-          <Card className="border-primary">
-            <CardHeader>
-              <CardTitle>Modifier {editingJoueur.pseudo}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="edit-pseudo">Pseudo</Label>
-                <Input id="edit-pseudo" value={editingJoueur.pseudo} onChange={(e) => setEditingJoueur({ ...editingJoueur, pseudo: e.target.value })} />
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="edit-paye" checked={editingJoueur.paye} onCheckedChange={(c) => setEditingJoueur({ ...editingJoueur, paye: c })} />
-                  <Label htmlFor="edit-paye">A payé</Label>
+          <Modal open={!!editingJoueur} onClose={() => setEditingJoueur(null)}>
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle>Modifier {editingJoueur.pseudo}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-pseudo">Pseudo</Label>
+                  <Input id="edit-pseudo" value={editingJoueur.pseudo} onChange={(e) => setEditingJoueur({ ...editingJoueur, pseudo: e.target.value })} />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="edit-arbitre" checked={editingJoueur.arbitre} onCheckedChange={(c) => setEditingJoueur({ ...editingJoueur, arbitre: c })} />
-                  <Label htmlFor="edit-arbitre">Arbitre</Label>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="edit-paye" checked={editingJoueur.paye} onCheckedChange={(c) => setEditingJoueur({ ...editingJoueur, paye: c })} />
+                    <Label htmlFor="edit-paye">A payé</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="edit-arbitre" checked={editingJoueur.arbitre} onCheckedChange={(c) => setEditingJoueur({ ...editingJoueur, arbitre: c })} />
+                    <Label htmlFor="edit-arbitre">Arbitre</Label>
+                  </div>
                 </div>
-              </div>
-              <div className="flex space-x-2">
-                <Button onClick={() => modifierJoueur(editingJoueur.id, editingJoueur)} className="flex-1">
-                  Sauvegarder
+                <div className="flex space-x-2">
+                  <Button onClick={() => modifierJoueur(editingJoueur.id, editingJoueur)} className="flex-1">
+                    Sauvegarder
+                  </Button>
+                  <Button variant="outline" onClick={() => setEditingJoueur(null)} className="flex-1">
+                    Annuler
+                  </Button>
+                </div>
+                <Button variant="destructive" onClick={() => supprimerJoueur(editingJoueur.id)} className="w-full">
+                  Supprimer
                 </Button>
-                <Button variant="outline" onClick={() => setEditingJoueur(null)} className="flex-1">
-                  Annuler
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Modal>
         )}
       </div>
     </div>
