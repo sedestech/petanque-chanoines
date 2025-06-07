@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
+import { Modal } from '@/components/ui/modal.jsx'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
@@ -100,6 +101,18 @@ function App() {
   }
 
   const supprimerJoueur = (id) => {
+    const joueur = joueurs.find(j => j.id === id)
+    if (!joueur) return
+
+    if (
+      concours &&
+      concours.statut === 'en_cours' &&
+      equipes.some(e => e.joueurs.includes(joueur.pseudo))
+    ) {
+      alert('Impossible de supprimer ce joueur car il est dans une équipe du concours en cours')
+      return
+    }
+
     if (confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?')) {
       setJoueurs(joueurs.filter(j => j.id !== id))
     }
@@ -518,57 +531,59 @@ function App() {
 
         {/* Modal d'édition */}
         {editingJoueur && (
-          <Card className="border-primary">
-            <CardHeader>
-              <CardTitle>Modifier {editingJoueur.pseudo}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="edit-pseudo">Pseudo</Label>
-                <Input
-                  id="edit-pseudo"
-                  value={editingJoueur.pseudo}
-                  onChange={(e) => setEditingJoueur({...editingJoueur, pseudo: e.target.value})}
-                />
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-paye"
-                    checked={editingJoueur.paye}
-                    onCheckedChange={(checked) => setEditingJoueur({...editingJoueur, paye: checked})}
+          <Modal open={!!editingJoueur} onClose={() => setEditingJoueur(null)}>
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle>Modifier {editingJoueur.pseudo}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-pseudo">Pseudo</Label>
+                  <Input
+                    id="edit-pseudo"
+                    value={editingJoueur.pseudo}
+                    onChange={(e) => setEditingJoueur({ ...editingJoueur, pseudo: e.target.value })}
                   />
-                  <Label htmlFor="edit-paye">A payé</Label>
                 </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-arbitre"
-                    checked={editingJoueur.arbitre}
-                    onCheckedChange={(checked) => setEditingJoueur({...editingJoueur, arbitre: checked})}
-                  />
-                  <Label htmlFor="edit-arbitre">Arbitre</Label>
+
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="edit-paye"
+                      checked={editingJoueur.paye}
+                      onCheckedChange={(checked) => setEditingJoueur({ ...editingJoueur, paye: checked })}
+                    />
+                    <Label htmlFor="edit-paye">A payé</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="edit-arbitre"
+                      checked={editingJoueur.arbitre}
+                      onCheckedChange={(checked) => setEditingJoueur({ ...editingJoueur, arbitre: checked })}
+                    />
+                    <Label htmlFor="edit-arbitre">Arbitre</Label>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={() => modifierJoueur(editingJoueur.id, editingJoueur)}
-                  className="flex-1"
+
+                <div className="flex space-x-2">
+                  <Button onClick={() => modifierJoueur(editingJoueur.id, editingJoueur)} className="flex-1">
+                    Sauvegarder
+                  </Button>
+                  <Button variant="outline" onClick={() => setEditingJoueur(null)} className="flex-1">
+                    Annuler
+                  </Button>
+                </div>
+                <Button
+                  variant="destructive"
+                  onClick={() => supprimerJoueur(editingJoueur.id)}
+                  className="w-full"
                 >
-                  Sauvegarder
+                  Supprimer
                 </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => setEditingJoueur(null)}
-                  className="flex-1"
-                >
-                  Annuler
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Modal>
         )}
       </div>
     </div>
