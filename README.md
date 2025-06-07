@@ -50,6 +50,7 @@ VITE_SUPABASE_ANON_KEY=<your anonymous key>
 If the URL or key is incorrect, the application will display an "Invalid URL"
 error in the browser.
 
+
 ## Setup
 
 Install dependencies and start the development server:

@@ -7,11 +7,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL and anonymous key must be provided via environment variables')
 }
 
+
 try {
   // Ensure the URL is well formed to avoid "Invalid URL" errors in the browser
   new URL(supabaseUrl)
 } catch {
   throw new Error(`Invalid Supabase URL: ${supabaseUrl}`)
 }
+
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
