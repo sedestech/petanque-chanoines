@@ -14,6 +14,8 @@ application.
 - Supabase credentials via `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 
 You can place these variables in a `.env` file at the project root.
+The Supabase URL must be a full URL starting with `https://`, for example
+`https://<project>.supabase.co`.
 
 Create a `petanque_data` table in Supabase with the columns `key` (text,
 primary key) and `value` (jsonb). The application stores its state in this table
@@ -44,6 +46,10 @@ a `.env` file:
 VITE_SUPABASE_URL=<your Supabase URL>
 VITE_SUPABASE_ANON_KEY=<your anonymous key>
 ```
+
+If the URL or key is incorrect, the application will display an "Invalid URL"
+error in the browser.
+
 
 ## Setup
 
