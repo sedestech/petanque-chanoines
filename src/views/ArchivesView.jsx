@@ -1,7 +1,8 @@
 
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Archive, Trophy, Crown, Trash2, Badge } from 'lucide-react'
+import { Archive, Trophy, Crown, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge.jsx'
 
 function ArchivesView({ archives, setArchives, setCurrentView }) {
   const supprimerArchive = (index) => {
