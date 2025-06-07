@@ -88,7 +88,16 @@ function AdminView({
 
                   )}
                 </div>
-                {equipes.length > 0 && (
+                {equipes.length === 0 ? (
+                  <Button
+                    onClick={() => setCurrentView('equipes')}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Créer les équipes
+                  </Button>
+                ) : (
                   <Button
                     onClick={() => {
                       if (parties.length === 0) {

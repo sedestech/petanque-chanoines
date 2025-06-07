@@ -223,6 +223,20 @@ function App() {
 
     setCurrentView('parties')
   }
+  const terminerConcours = async () => {
+    if (!concours) return
+    if (confirm("Êtes-vous sûr de vouloir terminer ce concours ?")) {
+      await deleteRow("concours", concours.id)
+      equipes.forEach(e => deleteRow("equipes", e.id))
+      parties.forEach(p => deleteRow("parties", p.id))
+      setConcours(null)
+      setEquipes([])
+      setParties([])
+      setPartieActuelle(0)
+      setCurrentView("admin")
+    }
+  }
+
 
   const enregistrerScore = async (partieId, score1, score2) => {
     const partiesUpdated = parties.map(partie => {
@@ -707,13 +721,7 @@ function App() {
                   {concours.statut === 'en_cours' && (
                     <Button
                       variant="destructive"
-                      onClick={async () => {
-                        if (confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
-                          const updated = { ...concours, statut: 'termine' }
-                          setConcours(updated)
-                          await persistData('concours', updated)
-                        }
-                      }}
+                      onClick={terminerConcours}
                       className="w-full"
                     >
                       Terminer le concours
