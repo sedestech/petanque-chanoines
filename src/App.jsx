@@ -691,9 +691,14 @@ function App() {
                       variant="destructive"
                       onClick={async () => {
                         if (confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
-                          const updated = { ...concours, statut: 'termine' }
-                          setConcours(updated)
-                          await persistData('concours', updated)
+                          await deleteRow('concours', concours.id)
+                          equipes.forEach(e => deleteRow('equipes', e.id))
+                          parties.forEach(p => deleteRow('parties', p.id))
+                          setConcours(null)
+                          setEquipes([])
+                          setParties([])
+                          setPartieActuelle(0)
+                          setCurrentView('admin')
                         }
                       }}
                       className="w-full"
