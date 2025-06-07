@@ -41,6 +41,7 @@ function App() {
   const [showArbitreLogin, setShowArbitreLogin] = useState(false)
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
+  const [dataLoaded, setDataLoaded] = useState(false)
 
   // Mot de passe arbitre via variable d'environnement
   const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
@@ -59,6 +60,7 @@ function App() {
       setEquipes(savedEquipes)
       setParties(savedParties)
       setArchives(savedArchives)
+      setDataLoaded(true)
     }
     fetchData()
 
