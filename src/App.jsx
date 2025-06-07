@@ -56,6 +56,7 @@ function App() {
 
       setJoueurs(savedJoueurs)
       setConcours(savedConcours)
+      setPartieActuelle(savedConcours?.partieActuelle || 0)
       setEquipes(savedEquipes)
       setParties(savedParties)
       setArchives(savedArchives)
@@ -65,7 +66,10 @@ function App() {
 
     const unsubscribers = [
       subscribeToRemoteData('joueurs', setJoueurs),
-      subscribeToRemoteData('concours', setConcours),
+      subscribeToRemoteData('concours', (c) => {
+        setConcours(c)
+        setPartieActuelle(c?.partieActuelle || 0)
+      }),
       subscribeToRemoteData('equipes', setEquipes),
       subscribeToRemoteData('parties', setParties),
       subscribeToRemoteData('archives', setArchives)
@@ -1026,7 +1030,11 @@ function App() {
                   // Générer la partie suivante
                   const nouvellesParties = genererParties()
                   setParties(nouvellesParties)
-                  setPartieActuelle(partieActuelle + 1)
+                  const prochaine = partieActuelle + 1
+                  setPartieActuelle(prochaine)
+                  if (concours) {
+                    setConcours({ ...concours, partieActuelle: prochaine })
+                  }
                 }
               }}
               className="w-full"
