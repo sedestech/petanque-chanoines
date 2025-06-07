@@ -15,6 +15,7 @@ export default function ConcoursView({
   setNombreParties,
   creerConcours,
   concours,
+  arreterConcours,
 }) {
   const handleCreerConcours = async () => {
     if (nomConcours.trim()) {
@@ -30,7 +31,22 @@ export default function ConcoursView({
           <h1 className="text-xl font-bold">Gestion des Concours</h1>
           <Trophy className="w-6 h-6 text-primary" />
         </div>
-        {!concours && (
+        {concours ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Concours en cours</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="font-medium">{concours.nom}</p>
+                <p className="text-sm text-muted-foreground">{new Date(concours.date).toLocaleDateString('fr-FR')}</p>
+              </div>
+              <Button variant="destructive" onClick={arreterConcours} className="w-full">
+                Terminer le concours
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">

@@ -44,6 +44,18 @@ function App() {
   const [expandedArchive, setExpandedArchive] = useState(null)
   const [dataLoaded, setDataLoaded] = useState(false)
 
+  const arreterConcours = async () => {
+    if (concours && confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
+      await deleteRow('concours', concours.id)
+      equipes.forEach((e) => deleteRow('equipes', e.id))
+      parties.forEach((p) => deleteRow('parties', p.id))
+      setConcours(null)
+      setEquipes([])
+      setParties([])
+      setPartieActuelle(0)
+    }
+  }
+
   // Mot de passe arbitre via variable d'environnement
   const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
 
@@ -689,13 +701,7 @@ function App() {
                   {concours.statut === 'en_cours' && (
                     <Button
                       variant="destructive"
-                      onClick={async () => {
-                        if (confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
-                          const updated = { ...concours, statut: 'termine' }
-                          setConcours(updated)
-                          await persistData('concours', updated)
-                        }
-                      }}
+                      onClick={arreterConcours}
                       className="w-full"
                     >
                       Terminer le concours
@@ -1128,6 +1134,7 @@ function App() {
           parties={parties}
           partieActuelle={partieActuelle}
           commencerParties={commencerParties}
+          arreterConcours={arreterConcours}
         />
       )
     case 'joueurs':

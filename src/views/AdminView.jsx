@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Crown, Users, Trophy, Play, Archive } from 'lucide-react'
 
-function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, partieActuelle, commencerParties }) {
+function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, partieActuelle, commencerParties, arreterConcours }) {
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -79,6 +79,9 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
                     {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
                   </Button>
                 )}
+                <Button variant="destructive" onClick={arreterConcours} className="w-full">
+                  Terminer le concours
+                </Button>
               </div>
             </CardContent>
           </Card>
