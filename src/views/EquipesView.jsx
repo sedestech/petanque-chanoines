@@ -34,7 +34,7 @@ export default function EquipesView({
       ;[joueursAleatoires[i], joueursAleatoires[j]] = [joueursAleatoires[j], joueursAleatoires[i]]
     }
     for (let i = 0; i < nombreEquipes; i++) {
-      nouvellesEquipes.push({ id: Date.now().toString() + i, nom: `Équipe ${equipes.length + i + 1}`, joueurs: [], victoires: 0, points: 0, partiesJouees: 0 })
+      nouvellesEquipes.push({ id: crypto.randomUUID(), nom: `Équipe ${equipes.length + i + 1}`, joueurs: [], victoires: 0, points: 0, partiesJouees: 0 })
     }
     joueursAleatoires.forEach((joueur, index) => {
       const equipeIndex = index % nombreEquipes
@@ -55,7 +55,7 @@ export default function EquipesView({
         (id) => joueurs.find((j) => j.id === id).pseudo
       )
       const nouvelleEquipe = {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         nom: nomEquipe.trim(),
         joueurs: joueursEquipe,
         victoires: 0,
