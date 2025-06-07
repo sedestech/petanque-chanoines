@@ -1,8 +1,9 @@
 # La Pétanque des Chanoines
 
-This project is a React application built with Vite. Data is stored locally in
-the browser using `localStorage`. Supabase is not currently used, so you can
-run the app without any Supabase credentials.
+This project is a React application built with Vite. Data is persisted using
+[Supabase](https://supabase.com/), allowing all users to share the same state.
+Provide your Supabase credentials via environment variables in order to run the
+application.
 
 ## Prerequisites
 
@@ -10,8 +11,13 @@ run the app without any Supabase credentials.
 - **pnpm** package manager
 - Optional application password via the `VITE_ARBITRE_PASSWORD` environment
   variable
+- Supabase credentials via `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 
-You can place this variable in a `.env` file at the project root.
+You can place these variables in a `.env` file at the project root.
+
+Create a `petanque_data` table in Supabase with the columns `key` (text,
+primary key) and `value` (jsonb). The application stores its state in this table
+using keys such as `joueurs`, `concours`, `equipes`, `parties` and `archives`.
 
 ## Setup
 

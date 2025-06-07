@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.j
 import { Badge } from '@/components/ui/badge.jsx'
 import PartieCard from '@/components/PartieCard.jsx'
 import { Play } from 'lucide-react'
+import { saveRemoteData } from '../remoteStorage.js'
 
 export default function PartiesView({
   setCurrentView,
@@ -100,9 +101,9 @@ export default function PartiesView({
                   setParties([])
                   setPartieActuelle(0)
                   setCurrentView('admin')
-                  localStorage.removeItem('petanque_concours')
-                  localStorage.removeItem('petanque_equipes')
-                  localStorage.removeItem('petanque_parties')
+                  saveRemoteData('concours', null)
+                  saveRemoteData('equipes', [])
+                  saveRemoteData('parties', [])
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {
                   const nouvellesParties = genererParties()
