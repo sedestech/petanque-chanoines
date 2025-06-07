@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.j
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
-import { Separator } from '@/components/ui/separator.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
-import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, UserCheck, Medal } from 'lucide-react'
+import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
 import JoueurView from '@/views/JoueurView.jsx'
@@ -17,7 +16,7 @@ import PartieCard from '@/components/PartieCard.jsx'
 
 function App() {
   const [currentView, setCurrentView] = useState('home')
-  const [isArbitre, setIsArbitre] = useState(false)
+  const [, setIsArbitre] = useState(false)
   const [password, setPassword] = useState('')
   const [joueurs, setJoueurs] = useState([])
   const [concours, setConcours] = useState(null)
@@ -29,7 +28,6 @@ function App() {
   const [nombreParties, setNombreParties] = useState(3)
   const [parties, setParties] = useState([])
   const [partieActuelle, setPartieActuelle] = useState(0)
-  const [scores, setScores] = useState({ equipe1: '', equipe2: '' })
   const [showArbitreLogin, setShowArbitreLogin] = useState(false)
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
