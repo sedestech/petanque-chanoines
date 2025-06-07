@@ -98,6 +98,7 @@ function AdminView({
                     Créer les équipes
                   </Button>
                 ) : (
+                  <>
                   <Button
                     onClick={() => {
                       if (parties.length === 0) {
@@ -116,6 +117,7 @@ function AdminView({
                 <Button variant="destructive" onClick={handleTerminate} className="w-full">
                   Terminer le concours
                 </Button>
+                  </>
               )}
             </div>
             </CardContent>
