@@ -1,14 +1,15 @@
-import React from 'react'
+
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Badge } from '@/components/ui/badge.jsx'
-import { Archive, Trophy, Trash2, Crown } from 'lucide-react'
+import { Archive, Trophy, Crown, Trash2, Badge } from 'lucide-react'
 
-export default function ArchivesView({ archives, setArchives, setCurrentView }) {
+function ArchivesView({ archives, setArchives, setCurrentView }) {
   const supprimerArchive = (index) => {
-    const nouvelles = archives.filter((_, i) => i !== index)
-    setArchives(nouvelles)
+    const nouvellesArchives = archives.filter((_, i) => i !== index)
+    setArchives(nouvellesArchives)
   }
+
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto space-y-6">
@@ -22,6 +23,7 @@ export default function ArchivesView({ archives, setArchives, setCurrentView }) 
           </h1>
           <div className="w-20"></div>
         </div>
+
         {archives.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">
@@ -85,3 +87,6 @@ export default function ArchivesView({ archives, setArchives, setCurrentView }) 
     </div>
   )
 }
+
+export default ArchivesView
+

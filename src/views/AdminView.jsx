@@ -1,16 +1,10 @@
-import React from 'react'
+
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Users, Trophy, Play, Archive, Crown } from 'lucide-react'
+import { Crown, Users, Trophy, Play, Archive } from 'lucide-react'
 
-export default function AdminView({
-  setCurrentView,
-  setIsArbitre,
-  concours,
-  equipes,
-  parties,
-  partieActuelle,
-}) {
+function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, partieActuelle }) {
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -21,6 +15,7 @@ export default function AdminView({
           <h1 className="text-xl font-bold">Administration</h1>
           <Crown className="w-6 h-6 text-primary" />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           <Button onClick={() => setCurrentView('joueurs')} className="h-20 flex-col" variant="outline">
             <Users className="w-6 h-6 mb-2" />
@@ -39,6 +34,9 @@ export default function AdminView({
             Archives
           </Button>
         </div>
+
+        {/* Avertissement synchronisation */}
+
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="pt-4">
             <div className="flex items-start space-x-2">
@@ -52,6 +50,7 @@ export default function AdminView({
             </div>
           </CardContent>
         </Card>
+
         {concours && (
           <Card>
             <CardHeader>
@@ -61,13 +60,20 @@ export default function AdminView({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <p className="font-medium">{concours.nom}</p>
-                  <p className="text-sm text-muted-foreground">{new Date(concours.date).toLocaleDateString('fr-FR')}</p>
+
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(concours.date).toLocaleDateString('fr-FR')}
+                  </p>
+
                   <div className="flex justify-between text-sm">
                     <span>Équipes: {equipes.length}</span>
                     <span>Parties: {concours.nombreParties}</span>
                   </div>
                   {parties.length > 0 && (
-                    <div className="text-sm text-muted-foreground">Partie en cours: {partieActuelle + 1}/{concours.nombreParties}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Partie en cours: {partieActuelle + 1}/{concours.nombreParties}
+                    </div>
+
                   )}
                 </div>
                 {equipes.length > 0 && parties.length > 0 && (
@@ -84,3 +90,7 @@ export default function AdminView({
     </div>
   )
 }
+
+
+export default AdminView
+
