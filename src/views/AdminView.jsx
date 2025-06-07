@@ -2,8 +2,34 @@
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Crown, Users, Trophy, Play, Archive } from 'lucide-react'
+import { deleteRow } from '../remoteStorage.js'
 
-function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, partieActuelle, commencerParties }) {
+function AdminView({
+  setCurrentView,
+  setIsArbitre,
+  concours,
+  equipes,
+  parties,
+  partieActuelle,
+  commencerParties,
+  setConcours,
+  setEquipes,
+  setParties,
+  setPartieActuelle,
+}) {
+
+  const handleTerminate = async () => {
+    if (confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
+      await deleteRow('concours', concours.id)
+      equipes.forEach((e) => deleteRow('equipes', e.id))
+      parties.forEach((p) => deleteRow('parties', p.id))
+      setConcours(null)
+      setEquipes([])
+      setParties([])
+      setPartieActuelle(0)
+      setCurrentView('admin')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -73,13 +99,16 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
                     }}
                     className="w-full"
                     variant="outline"
-                    disabled={parties.length === 0 && equipes.length < 2}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
-                  </Button>
-                )}
-              </div>
+                  disabled={parties.length === 0 && equipes.length < 2}
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
+                </Button>
+                <Button variant="destructive" onClick={handleTerminate} className="w-full">
+                  Terminer le concours
+                </Button>
+              )}
+            </div>
             </CardContent>
           </Card>
         )}

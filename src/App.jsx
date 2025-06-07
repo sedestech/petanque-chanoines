@@ -1128,6 +1128,10 @@ function App() {
           parties={parties}
           partieActuelle={partieActuelle}
           commencerParties={commencerParties}
+          setConcours={setConcours}
+          setEquipes={setEquipes}
+          setParties={setParties}
+          setPartieActuelle={setPartieActuelle}
         />
       )
     case 'joueurs':
