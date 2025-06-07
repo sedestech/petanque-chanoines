@@ -16,24 +16,26 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
           <Crown className="w-6 h-6 text-primary" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Button onClick={() => setCurrentView('joueurs')} className="h-20 flex-col" variant="outline">
-            <Users className="w-6 h-6 mb-2" />
-            Joueurs
-          </Button>
-          <Button onClick={() => setCurrentView('concours')} className="h-20 flex-col" variant="outline">
-            <Trophy className="w-6 h-6 mb-2" />
-            Concours
-          </Button>
-          <Button onClick={() => setCurrentView('equipes')} className="h-20 flex-col" variant="outline">
-            <Play className="w-6 h-6 mb-2" />
-            Équipes
-          </Button>
-          <Button onClick={() => setCurrentView('archives')} className="h-20 flex-col" variant="outline">
-            <Archive className="w-6 h-6 mb-2" />
-            Archives
-          </Button>
-        </div>
+        <Card>
+          <CardContent className="grid grid-cols-2 gap-4">
+            <Button onClick={() => setCurrentView('joueurs')} className="h-20 flex-col" variant="outline">
+              <Users className="w-6 h-6 mb-2" />
+              Joueurs
+            </Button>
+            <Button onClick={() => setCurrentView('concours')} className="h-20 flex-col" variant="outline">
+              <Trophy className="w-6 h-6 mb-2" />
+              Concours
+            </Button>
+            <Button onClick={() => setCurrentView('equipes')} className="h-20 flex-col" variant="outline">
+              <Play className="w-6 h-6 mb-2" />
+              Équipes
+            </Button>
+            <Button onClick={() => setCurrentView('archives')} className="h-20 flex-col" variant="outline">
+              <Archive className="w-6 h-6 mb-2" />
+              Archives
+            </Button>
+          </CardContent>
+        </Card>
 
         {concours && (
           <Card>
