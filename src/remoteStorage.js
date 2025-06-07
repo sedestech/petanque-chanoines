@@ -12,7 +12,30 @@ export async function loadRemoteData(key, defaultValue) {
 }
 
 export async function saveRemoteData(key, value) {
-  await supabase
+  const { error } = await supabase
     .from('petanque_data')
     .upsert({ key, value }, { onConflict: 'key' })
+
+  if (error) {
+    console.error(`Failed to save ${key} to Supabase`, error)
+    return false
+  }
+  return true
+}
+
+export function subscribeToRemoteData(key, callback) {
+  const channel = supabase
+    .channel(`petanque-data-${key}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'petanque_data', filter: `key=eq.${key}` },
+      (payload) => {
+        callback(payload.new ? payload.new.value : null)
+      }
+    )
+    .subscribe()
+
+  return () => {
+    supabase.removeChannel(channel)
+  }
 }

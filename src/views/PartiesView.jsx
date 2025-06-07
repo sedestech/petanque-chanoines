@@ -21,6 +21,12 @@ export default function PartiesView({
   setEquipes,
   setConcours,
 }) {
+  async function persistData(key, value) {
+    const ok = await saveRemoteData(key, value)
+    if (!ok) {
+      alert(`Erreur lors de la sauvegarde de ${key}`)
+    }
+  }
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -101,9 +107,9 @@ export default function PartiesView({
                   setParties([])
                   setPartieActuelle(0)
                   setCurrentView('admin')
-                  saveRemoteData('concours', null)
-                  saveRemoteData('equipes', [])
-                  saveRemoteData('parties', [])
+                  persistData('concours', null)
+                  persistData('equipes', [])
+                  persistData('parties', [])
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {
                   const nouvellesParties = genererParties()

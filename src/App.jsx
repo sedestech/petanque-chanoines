@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Modal } from '@/components/ui/modal.jsx'
-import { loadRemoteData, saveRemoteData } from './remoteStorage.js'
+import { loadRemoteData, saveRemoteData, subscribeToRemoteData } from './remoteStorage.js'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
@@ -34,6 +34,13 @@ function App() {
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
 
+  async function persistData(key, value) {
+    const ok = await saveRemoteData(key, value)
+    if (!ok) {
+      alert(`Erreur lors de la sauvegarde de ${key}`)
+    }
+  }
+
   // Mot de passe arbitre via variable d'environnement
   const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
 
@@ -53,27 +60,39 @@ function App() {
       setArchives(savedArchives)
     }
     fetchData()
+
+    const unsubscribers = [
+      subscribeToRemoteData('joueurs', setJoueurs),
+      subscribeToRemoteData('concours', setConcours),
+      subscribeToRemoteData('equipes', setEquipes),
+      subscribeToRemoteData('parties', setParties),
+      subscribeToRemoteData('archives', setArchives)
+    ]
+
+    return () => {
+      unsubscribers.forEach((unsub) => unsub())
+    }
   }, [])
 
   // Sauvegarde automatique
   useEffect(() => {
-    saveRemoteData('joueurs', joueurs)
+    persistData('joueurs', joueurs)
   }, [joueurs])
 
   useEffect(() => {
-    saveRemoteData('concours', concours)
+    persistData('concours', concours)
   }, [concours])
 
   useEffect(() => {
-    saveRemoteData('equipes', equipes)
+    persistData('equipes', equipes)
   }, [equipes])
 
   useEffect(() => {
-    saveRemoteData('parties', parties)
+    persistData('parties', parties)
   }, [parties])
 
   useEffect(() => {
-    saveRemoteData('archives', archives)
+    persistData('archives', archives)
   }, [archives])
 
   const handleArbitreLogin = () => {
@@ -986,9 +1005,9 @@ function App() {
                   setCurrentView('admin')
                   
                   // Nettoyer les données du concours sur Supabase
-                  saveRemoteData('concours', null)
-                  saveRemoteData('equipes', [])
-                  saveRemoteData('parties', [])
+                  persistData('concours', null)
+                  persistData('equipes', [])
+                  persistData('parties', [])
                   
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {
