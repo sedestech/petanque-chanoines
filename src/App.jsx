@@ -6,7 +6,13 @@ import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Modal } from '@/components/ui/modal.jsx'
-import { loadRemoteData, saveRemoteData, subscribeToRemoteData } from './remoteStorage.js'
+import {
+  fetchRows,
+  insertRow,
+  updateRow,
+  deleteRow,
+  subscribeToTable
+} from './remoteStorage.js'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
@@ -33,14 +39,6 @@ function App() {
   const [showArbitreLogin, setShowArbitreLogin] = useState(false)
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
-  const [dataLoaded, setDataLoaded] = useState(false)
-
-  async function persistData(key, value) {
-    const ok = await saveRemoteData(key, value)
-    if (!ok) {
-      alert(`Erreur lors de la sauvegarde de ${key}`)
-    }
-  }
 
   // Mot de passe arbitre via variable d'environnement
   const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
@@ -48,33 +46,33 @@ function App() {
   // Chargement des données depuis Supabase
   useEffect(() => {
     async function fetchData() {
-      const savedJoueurs = await loadRemoteData('joueurs', [])
-      const savedConcours = await loadRemoteData('concours', null)
-      const savedEquipes = await loadRemoteData('equipes', [])
-      const savedParties = await loadRemoteData('parties', [])
-      const savedArchives = await loadRemoteData('archives', [])
+      const savedJoueurs = await fetchRows('joueurs')
+      const savedConcoursArr = await fetchRows('concours')
+      const savedEquipes = await fetchRows('equipes')
+      const savedParties = await fetchRows('parties')
+      const savedArchives = await fetchRows('archives')
 
       setJoueurs(savedJoueurs)
-      setConcours(savedConcours)
+      setConcours(savedConcoursArr[0] || null)
       setEquipes(savedEquipes)
       setParties(savedParties)
       setArchives(savedArchives)
-      setDataLoaded(true)
     }
     fetchData()
 
     const unsubscribers = [
-      subscribeToRemoteData('joueurs', setJoueurs),
-      subscribeToRemoteData('concours', setConcours),
-      subscribeToRemoteData('equipes', setEquipes),
-      subscribeToRemoteData('parties', setParties),
-      subscribeToRemoteData('archives', setArchives)
+      subscribeToTable('joueurs', setJoueurs),
+      subscribeToTable('concours', data => setConcours(data[0] || null)),
+      subscribeToTable('equipes', setEquipes),
+      subscribeToTable('parties', setParties),
+      subscribeToTable('archives', setArchives)
     ]
 
     return () => {
       unsubscribers.forEach((unsub) => unsub())
     }
   }, [])
+
 
   // Sauvegarde automatique
   useEffect(() => {
@@ -124,7 +122,7 @@ function App() {
     }
   }
 
-  const ajouterJoueur = () => {
+  const ajouterJoueur = async () => {
     if (newJoueur.pseudo.trim()) {
       const joueur = {
         id: crypto.randomUUID(),
@@ -134,15 +132,17 @@ function App() {
       }
       setJoueurs([...joueurs, joueur])
       setNewJoueur({ pseudo: '', paye: false, arbitre: false })
+      await insertRow('joueurs', joueur)
     }
   }
 
-  const modifierJoueur = (id, updates) => {
+  const modifierJoueur = async (id, updates) => {
     setJoueurs(joueurs.map(j => j.id === id ? { ...j, ...updates } : j))
     setEditingJoueur(null)
+    await updateRow('joueurs', id, updates)
   }
 
-  const supprimerJoueur = (id) => {
+  const supprimerJoueur = async (id) => {
     const joueur = joueurs.find(j => j.id === id)
     if (!joueur) return
 
@@ -157,6 +157,7 @@ function App() {
 
     if (confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?')) {
       setJoueurs(joueurs.filter(j => j.id !== id))
+      await deleteRow('joueurs', id)
     }
   }
 
@@ -176,6 +177,7 @@ function App() {
     setParties([])
     setPartieActuelle(0)
     await persistData('concours', nouveauConcours)
+
   }
 
   const genererParties = () => {
@@ -213,6 +215,7 @@ function App() {
     const nouvellesParties = genererParties()
     setParties(nouvellesParties)
     await persistData('parties', nouvellesParties)
+
     setCurrentView('parties')
   }
 
@@ -231,7 +234,9 @@ function App() {
     })
     
     setParties(partiesUpdated)
+
     await persistData('parties', partiesUpdated)
+
     
     // Mettre à jour les scores des équipes
     const partie = partiesUpdated.find(p => p.id === partieId)
@@ -251,7 +256,9 @@ function App() {
       })
       
       setEquipes(equipesUpdated)
+
       await persistData('equipes', equipesUpdated)
+
     }
   }
 
@@ -785,13 +792,16 @@ function App() {
       
       setEquipes(nouvellesEquipes)
       await persistData('equipes', nouvellesEquipes)
+
     }
 
     const supprimerEquipe = async (id) => {
       if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
+
         const updated = equipes.filter(e => e.id !== id)
         setEquipes(updated)
         await persistData('equipes', updated)
+
       }
     }
 
@@ -1035,9 +1045,9 @@ function App() {
                   setCurrentView('admin')
                   
                   // Nettoyer les données du concours sur Supabase
-                  persistData('concours', null)
-                  persistData('equipes', [])
-                  persistData('parties', [])
+                  deleteRow('concours', concours.id)
+                  equipes.forEach(e => deleteRow('equipes', e.id))
+                  parties.forEach(p => deleteRow('parties', p.id))
                   
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {

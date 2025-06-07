@@ -17,9 +17,21 @@ You can place these variables in a `.env` file at the project root.
 The Supabase URL must be a full URL starting with `https://`, for example
 `https://<project>.supabase.co`.
 
-Create a `petanque_data` table in Supabase with the columns `key` (text,
-primary key) and `value` (jsonb). The application stores its state in this table
-using keys such as `joueurs`, `concours`, `equipes`, `parties` and `archives`.
+Create the following tables in Supabase instead of the previous `petanque_data`
+JSON store. Each table uses a simple primary key column named `id`:
+
+- **joueurs** – `id` (text primary key), `pseudo` (text), `paye` (boolean),
+  `arbitre` (boolean)
+- **equipes** – `id` (text primary key), `nom` (text), `joueurs` (jsonb),
+  `victoires` (integer), `points` (integer), `partiesJouees` (integer)
+- **concours** – `id` (text primary key), `nom` (text), `date` (text),
+  `statut` (text), `nombreParties` (integer), `dureePartie` (integer),
+  `partieActuelle` (integer)
+- **parties** – `id` (text primary key), `numero` (integer), `equipe1` (jsonb),
+  `equipe2` (jsonb), `score1` (integer), `score2` (integer), `statut` (text),
+  `heureDebut` (text), `heureFin` (text)
+- **archives** – `id` (text primary key), `nom` (text), `date` (text),
+  `classementFinal` (jsonb)
 
 ### Supabase setup
 
@@ -27,16 +39,50 @@ If you are starting from scratch, run the following SQL commands in the
 Supabase SQL editor to create the table and insert initial data:
 
 ```sql
-CREATE TABLE petanque_data (
-  key   text PRIMARY KEY,
-  value jsonb
+CREATE TABLE joueurs (
+  id text PRIMARY KEY,
+  pseudo text,
+  paye boolean,
+  arbitre boolean
 );
 
--- Example insertion
-INSERT INTO petanque_data(key, value)
-VALUES ('joueurs', '[{"id":1,"pseudo":"Alice"}]')
-ON CONFLICT (key)
-  DO UPDATE SET value = EXCLUDED.value;
+CREATE TABLE equipes (
+  id text PRIMARY KEY,
+  nom text,
+  joueurs jsonb,
+  victoires integer,
+  points integer,
+  partiesJouees integer
+);
+
+CREATE TABLE concours (
+  id text PRIMARY KEY,
+  nom text,
+  date text,
+  statut text,
+  nombreParties integer,
+  dureePartie integer,
+  partieActuelle integer
+);
+
+CREATE TABLE parties (
+  id text PRIMARY KEY,
+  numero integer,
+  equipe1 jsonb,
+  equipe2 jsonb,
+  score1 integer,
+  score2 integer,
+  statut text,
+  heureDebut text,
+  heureFin text
+);
+
+CREATE TABLE archives (
+  id text PRIMARY KEY,
+  nom text,
+  date text,
+  classementFinal jsonb
+);
 ```
 
 Provide the project with your Supabase credentials via environment variables in
