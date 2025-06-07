@@ -11,7 +11,8 @@ import {
   insertRow,
   updateRow,
   deleteRow,
-  subscribeToTable
+  subscribeToTable,
+  persistData
 } from './remoteStorage.js'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'

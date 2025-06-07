@@ -36,6 +36,47 @@ export async function deleteRow(table, id) {
   return true
 }
 
+// Delete all rows for the table then bulk insert the provided rows
+export async function persistData(table, rows) {
+  const dataArray = Array.isArray(rows) ? rows : rows ? [rows] : []
+
+  // Fetch existing ids to remove current records
+  const { data: existing, error: fetchError } = await supabase
+    .from(table)
+    .select('id')
+
+  if (fetchError) {
+    console.error(`Failed to fetch existing ${table} rows`, fetchError)
+    return false
+  }
+
+  if (existing.length > 0) {
+    const { error: deleteError } = await supabase
+      .from(table)
+      .delete()
+      .in(
+        'id',
+        existing.map((r) => r.id)
+      )
+
+    if (deleteError) {
+      console.error(`Failed to clear ${table}`, deleteError)
+      return false
+    }
+  }
+
+  if (dataArray.length > 0) {
+    const { error: insertError } = await supabase.from(table).insert(dataArray)
+
+    if (insertError) {
+      console.error(`Failed to insert into ${table}`, insertError)
+      return false
+    }
+  }
+
+  return true
+}
+
 export function subscribeToTable(table, callback) {
   const channel = supabase
     .channel(`petanque-${table}`)
