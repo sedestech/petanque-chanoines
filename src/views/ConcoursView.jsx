@@ -16,9 +16,9 @@ export default function ConcoursView({
   creerConcours,
   concours,
 }) {
-  const handleCreerConcours = () => {
+  const handleCreerConcours = async () => {
     if (nomConcours.trim()) {
-      creerConcours(nomConcours.trim(), dateConcours, nombreParties)
+      await creerConcours(nomConcours.trim(), dateConcours, nombreParties)
       setCurrentView('admin')
     }
   }
