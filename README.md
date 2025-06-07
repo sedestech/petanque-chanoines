@@ -14,10 +14,41 @@ application.
 - Supabase credentials via `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 
 You can place these variables in a `.env` file at the project root.
+The Supabase URL must be a full URL starting with `https://`, for example
+`https://<project>.supabase.co`.
 
 Create a `petanque_data` table in Supabase with the columns `key` (text,
 primary key) and `value` (jsonb). The application stores its state in this table
 using keys such as `joueurs`, `concours`, `equipes`, `parties` and `archives`.
+
+### Supabase setup
+
+If you are starting from scratch, run the following SQL commands in the
+Supabase SQL editor to create the table and insert initial data:
+
+```sql
+CREATE TABLE petanque_data (
+  key   text PRIMARY KEY,
+  value jsonb
+);
+
+-- Example insertion
+INSERT INTO petanque_data(key, value)
+VALUES ('joueurs', '[{"id":1,"pseudo":"Alice"}]')
+ON CONFLICT (key)
+  DO UPDATE SET value = EXCLUDED.value;
+```
+
+Provide the project with your Supabase credentials via environment variables in
+a `.env` file:
+
+```
+VITE_SUPABASE_URL=<your Supabase URL>
+VITE_SUPABASE_ANON_KEY=<your anonymous key>
+```
+
+If the URL or key is incorrect, the application will display an "Invalid URL"
+error in the browser.
 
 ## Setup
 
