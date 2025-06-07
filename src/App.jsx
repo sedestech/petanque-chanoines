@@ -33,6 +33,7 @@ function App() {
   const [showArbitreLogin, setShowArbitreLogin] = useState(false)
   const [archives, setArchives] = useState([])
   const [expandedArchive, setExpandedArchive] = useState(null)
+  const [dataLoaded, setDataLoaded] = useState(false)
 
   async function persistData(key, value) {
     const ok = await saveRemoteData(key, value)
@@ -58,6 +59,7 @@ function App() {
       setEquipes(savedEquipes)
       setParties(savedParties)
       setArchives(savedArchives)
+      setDataLoaded(true)
     }
     fetchData()
 
@@ -76,24 +78,34 @@ function App() {
 
   // Sauvegarde automatique
   useEffect(() => {
-    persistData('joueurs', joueurs)
-  }, [joueurs])
+    if (dataLoaded) {
+      persistData('joueurs', joueurs)
+    }
+  }, [joueurs, dataLoaded])
 
   useEffect(() => {
-    persistData('concours', concours)
-  }, [concours])
+    if (dataLoaded) {
+      persistData('concours', concours)
+    }
+  }, [concours, dataLoaded])
 
   useEffect(() => {
-    persistData('equipes', equipes)
-  }, [equipes])
+    if (dataLoaded) {
+      persistData('equipes', equipes)
+    }
+  }, [equipes, dataLoaded])
 
   useEffect(() => {
-    persistData('parties', parties)
-  }, [parties])
+    if (dataLoaded) {
+      persistData('parties', parties)
+    }
+  }, [parties, dataLoaded])
 
   useEffect(() => {
-    persistData('archives', archives)
-  }, [archives])
+    if (dataLoaded) {
+      persistData('archives', archives)
+    }
+  }, [archives, dataLoaded])
 
   const handleArbitreLogin = () => {
     if (password === ARBITRE_PASSWORD) {
