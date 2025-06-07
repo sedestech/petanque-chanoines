@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
+import { Input } from '@/components/ui/input.jsx'
+import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Play, Plus, Trash2, Trophy } from 'lucide-react'
 
 export default function EquipesView({
@@ -12,33 +14,57 @@ export default function EquipesView({
   commencerParties,
   setCurrentView,
 }) {
-  const joueursDisponibles = joueurs.filter((j) => !j.arbitre)
+  const [nomEquipe, setNomEquipe] = useState('')
+  const [joueursSelectionnes, setJoueursSelectionnes] = useState([])
+
+  const joueursRestants = joueurs.filter(
+    (j) => !j.arbitre && !equipes.some((e) => e.joueurs.includes(j.pseudo))
+  )
 
   const formerEquipesAleatoires = () => {
-    if (joueursDisponibles.length < 2) {
+    if (joueursRestants.length < 2) {
       alert('Il faut au moins 2 joueurs (non arbitres) pour former des équipes')
       return
     }
-    const nombreEquipes = Math.ceil(joueursDisponibles.length / 3)
+    const nombreEquipes = Math.ceil(joueursRestants.length / 3)
     const nouvellesEquipes = []
-    const joueursAleatoires = [...joueursDisponibles]
+    const joueursAleatoires = [...joueursRestants]
     for (let i = joueursAleatoires.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       ;[joueursAleatoires[i], joueursAleatoires[j]] = [joueursAleatoires[j], joueursAleatoires[i]]
     }
     for (let i = 0; i < nombreEquipes; i++) {
-      nouvellesEquipes.push({ id: Date.now().toString() + i, nom: `Équipe ${i + 1}`, joueurs: [], victoires: 0, points: 0, partiesJouees: 0 })
+      nouvellesEquipes.push({ id: Date.now().toString() + i, nom: `Équipe ${equipes.length + i + 1}`, joueurs: [], victoires: 0, points: 0, partiesJouees: 0 })
     }
     joueursAleatoires.forEach((joueur, index) => {
       const equipeIndex = index % nombreEquipes
       nouvellesEquipes[equipeIndex].joueurs.push(joueur.pseudo)
     })
-    setEquipes(nouvellesEquipes)
+    setEquipes([...equipes, ...nouvellesEquipes])
   }
 
   const supprimerEquipe = (id) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
       setEquipes(equipes.filter((e) => e.id !== id))
+    }
+  }
+
+  const ajouterEquipeManuellement = () => {
+    if (nomEquipe.trim() && joueursSelectionnes.length > 0) {
+      const joueursEquipe = joueursSelectionnes.map(
+        (id) => joueurs.find((j) => j.id === id).pseudo
+      )
+      const nouvelleEquipe = {
+        id: Date.now().toString(),
+        nom: nomEquipe.trim(),
+        joueurs: joueursEquipe,
+        victoires: 0,
+        points: 0,
+        partiesJouees: 0,
+      }
+      setEquipes([...equipes, nouvelleEquipe])
+      setNomEquipe('')
+      setJoueursSelectionnes([])
     }
   }
 
@@ -61,18 +87,61 @@ export default function EquipesView({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Plus className="w-5 h-5 mr-2" /> Formation automatique
+                  <Plus className="w-5 h-5 mr-2" /> Créer une équipe manuellement
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Input
+                  placeholder="Nom de l'équipe"
+                  value={nomEquipe}
+                  onChange={(e) => setNomEquipe(e.target.value)}
+                />
+                <div className="space-y-1">
+                  {joueursRestants.map((j) => (
+                    <label key={j.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={joueursSelectionnes.includes(j.id)}
+                        onCheckedChange={(c) => {
+                          if (c) {
+                            setJoueursSelectionnes([...joueursSelectionnes, j.id])
+                          } else {
+                            setJoueursSelectionnes(joueursSelectionnes.filter((id) => id !== j.id))
+                          }
+                        }}
+                        id={`chk-${j.id}`}
+                      />
+                      <span>{j.pseudo}</span>
+                    </label>
+                  ))}
+                  {joueursRestants.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Plus de joueurs disponibles</p>
+                  )}
+                </div>
+                <Button
+                  onClick={ajouterEquipeManuellement}
+                  className="w-full"
+                  disabled={nomEquipe.trim() === '' || joueursSelectionnes.length === 0}
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Ajouter l'équipe
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Play className="w-5 h-5 mr-2" /> Formation automatique
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
-                  <p>Joueurs disponibles: {joueursDisponibles.length} (arbitres exclus)</p>
-                  <p>Équipes possibles: {Math.ceil(joueursDisponibles.length / 3)}</p>
+                  <p>Joueurs disponibles: {joueursRestants.length} (arbitres exclus)</p>
+                  <p>Équipes possibles: {Math.ceil(joueursRestants.length / 3)}</p>
                 </div>
-                <Button onClick={formerEquipesAleatoires} className="w-full" disabled={joueursDisponibles.length < 2}>
+                <Button onClick={formerEquipesAleatoires} className="w-full" disabled={joueursRestants.length < 2}>
                   <Play className="w-4 h-4 mr-2" /> Former les équipes automatiquement
                 </Button>
-                {joueursDisponibles.length < 2 && (
+                {joueursRestants.length < 2 && (
                   <p className="text-sm text-destructive">Il faut au moins 2 joueurs (non arbitres)</p>
                 )}
               </CardContent>

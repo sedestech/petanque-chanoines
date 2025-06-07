@@ -1044,7 +1044,17 @@ function App() {
     case 'joueur':
       return <JoueurView setCurrentView={setCurrentView} concours={concours} equipes={equipes} />
     case 'admin':
-      return <AdminView setCurrentView={setCurrentView} setIsArbitre={setIsArbitre} concours={concours} equipes={equipes} parties={parties} partieActuelle={partieActuelle} />
+      return (
+        <AdminView
+          setCurrentView={setCurrentView}
+          setIsArbitre={setIsArbitre}
+          concours={concours}
+          equipes={equipes}
+          parties={parties}
+          partieActuelle={partieActuelle}
+          commencerParties={commencerParties}
+        />
+      )
     case 'joueurs':
       return renderJoueursView()
     case 'concours':
