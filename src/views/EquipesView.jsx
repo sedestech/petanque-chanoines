@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Play, Plus, Trash2, Trophy } from 'lucide-react'
-import { saveRemoteData } from '../remoteStorage.js'
+import { persistData } from '../remoteStorage.js'
 
 export default function EquipesView({
   joueurs,
@@ -43,14 +43,14 @@ export default function EquipesView({
     })
     const updated = [...equipes, ...nouvellesEquipes]
     setEquipes(updated)
-    await saveRemoteData('equipes', updated)
+    await persistData('equipes', updated)
   }
 
   const supprimerEquipe = async (id) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
       const updated = equipes.filter((e) => e.id !== id)
       setEquipes(updated)
-      await saveRemoteData('equipes', updated)
+      await persistData('equipes', updated)
     }
   }
 
@@ -69,7 +69,7 @@ export default function EquipesView({
       }
       const updated = [...equipes, nouvelleEquipe]
       setEquipes(updated)
-      await saveRemoteData('equipes', updated)
+      await persistData('equipes', updated)
       setNomEquipe('')
       setJoueursSelectionnes([])
     }
