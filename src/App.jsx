@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Modal } from '@/components/ui/modal.jsx'
+import { loadRemoteData, saveRemoteData } from './remoteStorage.js'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
@@ -36,40 +37,43 @@ function App() {
   // Mot de passe arbitre via variable d'environnement
   const ARBITRE_PASSWORD = import.meta.env.VITE_ARBITRE_PASSWORD || ''
 
-  // Chargement des données depuis localStorage
+  // Chargement des données depuis Supabase
   useEffect(() => {
-    const savedJoueurs = localStorage.getItem('petanque_joueurs')
-    const savedConcours = localStorage.getItem('petanque_concours')
-    const savedEquipes = localStorage.getItem('petanque_equipes')
-    const savedParties = localStorage.getItem('petanque_parties')
-    const savedArchives = localStorage.getItem('petanque_archives')
-    
-    if (savedJoueurs) setJoueurs(JSON.parse(savedJoueurs))
-    if (savedConcours) setConcours(JSON.parse(savedConcours))
-    if (savedEquipes) setEquipes(JSON.parse(savedEquipes))
-    if (savedParties) setParties(JSON.parse(savedParties))
-    if (savedArchives) setArchives(JSON.parse(savedArchives))
+    async function fetchData() {
+      const savedJoueurs = await loadRemoteData('joueurs', [])
+      const savedConcours = await loadRemoteData('concours', null)
+      const savedEquipes = await loadRemoteData('equipes', [])
+      const savedParties = await loadRemoteData('parties', [])
+      const savedArchives = await loadRemoteData('archives', [])
+
+      setJoueurs(savedJoueurs)
+      setConcours(savedConcours)
+      setEquipes(savedEquipes)
+      setParties(savedParties)
+      setArchives(savedArchives)
+    }
+    fetchData()
   }, [])
 
   // Sauvegarde automatique
   useEffect(() => {
-    localStorage.setItem('petanque_joueurs', JSON.stringify(joueurs))
+    saveRemoteData('joueurs', joueurs)
   }, [joueurs])
 
   useEffect(() => {
-    if (concours) localStorage.setItem('petanque_concours', JSON.stringify(concours))
+    saveRemoteData('concours', concours)
   }, [concours])
 
   useEffect(() => {
-    localStorage.setItem('petanque_equipes', JSON.stringify(equipes))
+    saveRemoteData('equipes', equipes)
   }, [equipes])
 
   useEffect(() => {
-    localStorage.setItem('petanque_parties', JSON.stringify(parties))
+    saveRemoteData('parties', parties)
   }, [parties])
 
   useEffect(() => {
-    localStorage.setItem('petanque_archives', JSON.stringify(archives))
+    saveRemoteData('archives', archives)
   }, [archives])
 
   const handleArbitreLogin = () => {
@@ -981,10 +985,10 @@ function App() {
                   setPartieActuelle(0)
                   setCurrentView('admin')
                   
-                  // Supprimer les données du concours archivé du localStorage
-                  localStorage.removeItem('petanque_concours')
-                  localStorage.removeItem('petanque_equipes')
-                  localStorage.removeItem('petanque_parties')
+                  // Nettoyer les données du concours sur Supabase
+                  saveRemoteData('concours', null)
+                  saveRemoteData('equipes', [])
+                  saveRemoteData('parties', [])
                   
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {
