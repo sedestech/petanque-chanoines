@@ -23,6 +23,7 @@ export async function saveRemoteData(key, value) {
   return true
 }
 
+
 export function subscribeToRemoteData(key, callback) {
   const channel = supabase
     .channel(`petanque-data-${key}`)
