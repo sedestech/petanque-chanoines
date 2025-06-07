@@ -7,4 +7,9 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended
 })
 
-export default compat.config(eslintConfig)
+export default [
+  ...compat.config(eslintConfig),
+  {
+    ignores: ['dist/**', 'node_modules/**']
+  }
+]
