@@ -685,7 +685,25 @@ function App() {
                   <Badge variant="outline">
                     {concours.statut === 'en_cours' ? 'En cours' : 'Terminé'}
                   </Badge>
-                  
+
+                  {equipes.length > 0 && (
+                    <Button
+                      onClick={() => {
+                        if (parties.length === 0) {
+                          commencerParties()
+                        } else {
+                          setCurrentView('parties')
+                        }
+                      }}
+                      className="w-full"
+                      variant="outline"
+                      disabled={parties.length === 0 && equipes.length < 2}
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
+                    </Button>
+                  )}
+
                   {concours.statut === 'en_cours' && (
                     <Button
                       variant="destructive"
