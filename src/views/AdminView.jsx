@@ -98,7 +98,6 @@ function AdminView({
                     Créer les équipes
                   </Button>
                 ) : (
-                  <>
                   <Button
                     onClick={() => {
                       if (parties.length === 0) {
@@ -109,17 +108,16 @@ function AdminView({
                     }}
                     className="w-full"
                     variant="outline"
-                  disabled={parties.length === 0 && equipes.length < 2}
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
-                </Button>
+                    disabled={parties.length === 0 && equipes.length < 2}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    {parties.length === 0 ? 'Commencer les parties' : 'Reprendre les parties'}
+                  </Button>
+                )}
                 <Button variant="destructive" onClick={handleTerminate} className="w-full">
                   Terminer le concours
                 </Button>
-                  </>
-              )}
-            </div>
+              </div>
             </CardContent>
           </Card>
         )}
