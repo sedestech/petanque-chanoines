@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Modal } from '@/components/ui/modal.jsx'
+import EquipesView from '@/views/EquipesView.jsx'
 import {
   fetchRows,
   insertRow,
@@ -122,12 +123,8 @@ function App() {
     }
   }
 
-  const ajouterJoueur = async () => {
-    if (newJoueur.pseudo.trim()) {
-      const joueur = {
-        id: crypto.randomUUID(),
-        pseudo: newJoueur.pseudo.trim(),
-        paye: newJoueur.paye,
+    if (concours && concours.statut === 'en_cours') {
+      alert('Impossible de supprimer un joueur pendant un concours en cours')
         arbitre: newJoueur.arbitre
       }
       setJoueurs([...joueurs, joueur])
@@ -539,6 +536,7 @@ function App() {
         {/* Liste des joueurs */}
         <Card>
           <CardHeader>
+                        disabled={concours && concours.statut === 'en_cours'}
             <CardTitle>Joueurs inscrits ({joueurs.length})</CardTitle>
           </CardHeader>
           <CardContent>
@@ -599,6 +597,7 @@ function App() {
                   />
                 </div>
 
+                  disabled={concours && concours.statut === 'en_cours'}
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -719,187 +718,7 @@ function App() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="date-concours">Date</Label>
-                  <Input
-                    id="date-concours"
-                    type="date"
-                    value={dateConcours}
-                    onChange={(e) => setDateConcours(e.target.value)}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="nombre-parties">Nombre de parties</Label>
-                  <Input
-                    id="nombre-parties"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={nombreParties}
-                    onChange={(e) => setNombreParties(parseInt(e.target.value) || 3)}
-                  />
-                </div>
-                
-                <Button onClick={handleCreerConcours} className="w-full">
-                  <Trophy className="w-4 h-4 mr-2" />
-                  Créer le concours
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  const renderEquipesView = () => {
-    const joueursDisponibles = joueurs.filter(j => !j.arbitre) // Exclure seulement les arbitres
-    
-    const formerEquipesAleatoires = async () => {
-      if (joueursDisponibles.length < 2) {
-        alert('Il faut au moins 2 joueurs (non arbitres) pour former des équipes')
-        return
-      }
-      
-      const nombreEquipes = Math.ceil(joueursDisponibles.length / 3)
-      const nouvellesEquipes = []
-      const joueursAleatoires = [...joueursDisponibles]
-      
-      // Mélanger les joueurs
-      for (let i = joueursAleatoires.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[joueursAleatoires[i], joueursAleatoires[j]] = [joueursAleatoires[j], joueursAleatoires[i]]
-      }
-      
-      // Créer les équipes
-      for (let i = 0; i < nombreEquipes; i++) {
-        const equipe = {
-          id: crypto.randomUUID(),
-          nom: `Équipe ${i + 1}`,
-          joueurs: [],
-          victoires: 0,
-          points: 0,
-          partiesJouees: 0
-        }
-        nouvellesEquipes.push(equipe)
-      }
-      
-      // Répartir les joueurs dans les équipes
-      joueursAleatoires.forEach((joueur, index) => {
-        const equipeIndex = index % nombreEquipes
-        nouvellesEquipes[equipeIndex].joueurs.push(joueur.pseudo)
-      })
-      
-      setEquipes(nouvellesEquipes)
-      await persistData('equipes', nouvellesEquipes)
-
-    }
-
-    const supprimerEquipe = async (id) => {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
-
-        const updated = equipes.filter(e => e.id !== id)
-        setEquipes(updated)
-        await persistData('equipes', updated)
-
-      }
-    }
-
-    return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => setCurrentView('admin')}>
-              ← Retour
-            </Button>
-            <h1 className="text-xl font-bold">Gestion des Équipes</h1>
-            <Play className="w-6 h-6 text-primary" />
-          </div>
-
-          {!concours ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">
-                  Créez d'abord un concours pour gérer les équipes
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <>
-              {/* Formation automatique */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Plus className="w-5 h-5 mr-2" />
-                    Formation automatique
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-sm text-muted-foreground">
-                    <p>Joueurs disponibles: {joueursDisponibles.length} (arbitres exclus)</p>
-                    <p>Équipes possibles: {Math.ceil(joueursDisponibles.length / 3)}</p>
-                  </div>
-                  
-                  <Button 
-                    onClick={formerEquipesAleatoires}
-                    className="w-full"
-                    disabled={joueursDisponibles.length < 2}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Former les équipes automatiquement
-                  </Button>
-                  
-                  {joueursDisponibles.length < 2 && (
-                    <p className="text-sm text-destructive">
-                      Il faut au moins 2 joueurs (non arbitres)
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Liste des équipes */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Équipes formées ({equipes.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {equipes.length === 0 ? (
-                    <p className="text-muted-foreground text-center">
-                      Aucune équipe formée
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {equipes.map((equipe) => (
-                        <div key={equipe.id} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-medium">{equipe.nom}</h3>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => supprimerEquipe(equipe.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex flex-wrap gap-1">
-                              {equipe.joueurs.map((joueur, index) => (
-                                <Badge key={index} variant="outline">
-                                  {joueur}
-                                </Badge>
-                              ))}
-                            </div>
-                            
-                            <div className="flex justify-between text-sm text-muted-foreground">
-                              <span>{equipe.joueurs.length} joueur(s)</span>
-                              <span>Victoires: {equipe.victoires} | Points: {equipe.points}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+const renderPartiesView = () => (
                 </CardContent>
               </Card>
 
@@ -1066,7 +885,16 @@ function App() {
             </Button>
             
             {parties.some(p => p.statut !== 'terminee') && (
-              <p className="text-sm text-muted-foreground">
+      return (
+        <EquipesView
+          joueurs={joueurs}
+          equipes={equipes}
+          setEquipes={setEquipes}
+          concours={concours}
+          commencerParties={commencerParties}
+          setCurrentView={setCurrentView}
+        />
+      )
                 Terminez toutes les parties en cours avant de continuer
               </p>
             )}
