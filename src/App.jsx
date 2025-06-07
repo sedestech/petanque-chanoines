@@ -1051,8 +1051,8 @@ function App() {
             <CardTitle>Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button 
-              onClick={() => {
+            <Button
+              onClick={async () => {
                 if (partieActuelle + 1 >= concours.nombreParties) {
                   // Concours terminé - archiver
                   const equipesTriees = equipes.sort((a, b) => b.victoires - a.victoires || b.points - a.points)
