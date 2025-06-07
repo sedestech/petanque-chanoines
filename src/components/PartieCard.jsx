@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Button } from '@/components/ui/button.jsx'
@@ -12,6 +13,7 @@ function PartieCard({ partie, onEnregistrerScore }) {
     onEnregistrerScore(partie.id, score1, score2)
   }
 
+
   return (
     <div className="border rounded-lg p-4 space-y-4">
       <div className="flex items-center justify-between">
@@ -24,14 +26,18 @@ function PartieCard({ partie, onEnregistrerScore }) {
       <div className="grid grid-cols-3 gap-4 items-center">
         <div className="text-center">
           <p className="font-medium text-sm">{partie.equipe1.nom}</p>
+
           <div className="text-xs text-muted-foreground">{partie.equipe1.joueurs.join(', ')}</div>
+
         </div>
         <div className="text-center">
           <p className="text-lg font-bold">VS</p>
         </div>
         <div className="text-center">
           <p className="font-medium text-sm">{partie.equipe2.nom}</p>
+
           <div className="text-xs text-muted-foreground">{partie.equipe2.joueurs.join(', ')}</div>
+
         </div>
       </div>
 
@@ -50,10 +56,12 @@ function PartieCard({ partie, onEnregistrerScore }) {
       ) : (
         <div className="space-y-3">
           <div className="grid grid-cols-3 gap-4 items-center">
+
             <Input type="number" placeholder="Score" value={score1} onChange={(e) => setScore1(e.target.value)} min="0" />
             <div className="text-center text-sm text-muted-foreground">Scores</div>
             <Input type="number" placeholder="Score" value={score2} onChange={(e) => setScore2(e.target.value)} min="0" />
           </div>
+
           <Button onClick={handleEnregistrer} className="w-full" disabled={!score1 || !score2}>
             <Trophy className="w-4 h-4 mr-2" />
             Enregistrer le score
@@ -61,7 +69,10 @@ function PartieCard({ partie, onEnregistrerScore }) {
         </div>
       )}
     </div>
+
   )
 }
 
+
 export default PartieCard
+

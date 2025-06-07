@@ -1,8 +1,11 @@
+
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 
+
 function JoueurView({ setCurrentView, concours, equipes }) {
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -13,6 +16,7 @@ function JoueurView({ setCurrentView, concours, equipes }) {
           <h1 className="text-xl font-bold">Classement</h1>
           <div></div>
         </div>
+
 
         {!concours ? (
           <Card>
@@ -35,9 +39,11 @@ function JoueurView({ setCurrentView, concours, equipes }) {
                     .map((equipe, index) => (
                       <div key={equipe.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex items-center space-x-3">
+
                           <Badge variant={index < 3 ? 'default' : 'outline'}>
                             {index + 1}
                           </Badge>
+
                           <div>
                             <p className="font-medium">{equipe.nom}</p>
                             <p className="text-sm text-muted-foreground">{equipe.joueurs.join(', ')}</p>
@@ -60,3 +66,4 @@ function JoueurView({ setCurrentView, concours, equipes }) {
 }
 
 export default JoueurView
+

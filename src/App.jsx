@@ -13,6 +13,7 @@ import JoueurView from '@/views/JoueurView.jsx'
 import ArchivesView from '@/views/ArchivesView.jsx'
 import PartieCard from '@/components/PartieCard.jsx'
 
+
 function App() {
   const [currentView, setCurrentView] = useState('home')
   const [isArbitre, setIsArbitre] = useState(false)
@@ -1016,11 +1017,25 @@ function App() {
     case 'parties':
       return renderPartiesView()
     case 'archives':
+
       return <ArchivesView archives={archives} setArchives={setArchives} setCurrentView={setCurrentView} />
     default:
-      return renderHome()
+      return <HomeView
+          showArbitreLogin={showArbitreLogin}
+          setShowArbitreLogin={setShowArbitreLogin}
+          password={password}
+          setPassword={setPassword}
+          handleArbitreLogin={handleArbitreLogin}
+          concours={concours}
+          equipes={equipes}
+          parties={parties}
+          partieActuelle={partieActuelle}
+          archives={archives}
+          expandedArchive={expandedArchive}
+          setExpandedArchive={setExpandedArchive}
+        />
   }
+
   }
 
 export default App
-

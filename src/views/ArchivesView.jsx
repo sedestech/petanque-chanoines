@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Archive, Trophy, Crown, Trash2, Badge } from 'lucide-react'
@@ -7,6 +8,7 @@ function ArchivesView({ archives, setArchives, setCurrentView }) {
     const nouvellesArchives = archives.filter((_, i) => i !== index)
     setArchives(nouvellesArchives)
   }
+
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -87,3 +89,4 @@ function ArchivesView({ archives, setArchives, setCurrentView }) {
 }
 
 export default ArchivesView
+

@@ -1,8 +1,10 @@
+
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Crown, Users, Trophy, Play, Archive } from 'lucide-react'
 
 function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, partieActuelle }) {
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -34,6 +36,7 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
         </div>
 
         {/* Avertissement synchronisation */}
+
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="pt-4">
             <div className="flex items-start space-x-2">
@@ -57,9 +60,11 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
               <div className="space-y-4">
                 <div className="space-y-2">
                   <p className="font-medium">{concours.nom}</p>
+
                   <p className="text-sm text-muted-foreground">
                     {new Date(concours.date).toLocaleDateString('fr-FR')}
                   </p>
+
                   <div className="flex justify-between text-sm">
                     <span>Équipes: {equipes.length}</span>
                     <span>Parties: {concours.nombreParties}</span>
@@ -68,6 +73,7 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
                     <div className="text-sm text-muted-foreground">
                       Partie en cours: {partieActuelle + 1}/{concours.nombreParties}
                     </div>
+
                   )}
                 </div>
                 {equipes.length > 0 && parties.length > 0 && (
@@ -85,4 +91,6 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
   )
 }
 
+
 export default AdminView
+
