@@ -73,6 +73,45 @@ function App() {
     }
   }, [])
 
+
+  // Sauvegarde automatique
+  useEffect(() => {
+    if (dataLoaded) {
+      persistData('joueurs', joueurs)
+    }
+  }, [joueurs, dataLoaded])
+
+  useEffect(() => {
+    if (dataLoaded) {
+      persistData('concours', concours)
+    }
+  }, [concours, dataLoaded])
+
+  useEffect(() => {
+    if (dataLoaded) {
+      persistData('equipes', equipes)
+    }
+  }, [equipes, dataLoaded])
+
+  useEffect(() => {
+    if (dataLoaded) {
+      persistData('parties', parties)
+    }
+  }, [parties, dataLoaded])
+
+  useEffect(() => {
+    if (dataLoaded) {
+      persistData('archives', archives)
+    }
+  }, [archives, dataLoaded])
+
+  // Redirection automatique si le concours est archivé depuis un autre client
+  useEffect(() => {
+    if (!concours && (currentView === 'equipes' || currentView === 'parties')) {
+      setCurrentView('admin')
+    }
+  }, [concours, currentView])
+
   const handleArbitreLogin = () => {
     if (password === ARBITRE_PASSWORD) {
       setIsArbitre(true)
@@ -137,7 +176,8 @@ function App() {
     setEquipes([])
     setParties([])
     setPartieActuelle(0)
-    await insertRow('concours', nouveauConcours)
+    await persistData('concours', nouveauConcours)
+
   }
 
   const genererParties = () => {
@@ -174,9 +214,8 @@ function App() {
   const commencerParties = async () => {
     const nouvellesParties = genererParties()
     setParties(nouvellesParties)
-    for (const p of nouvellesParties) {
-      await insertRow('parties', p)
-    }
+    await persistData('parties', nouvellesParties)
+
     setCurrentView('parties')
   }
 
@@ -195,12 +234,9 @@ function App() {
     })
     
     setParties(partiesUpdated)
-    await updateRow('parties', partieId, {
-      score1: parseInt(score1) || 0,
-      score2: parseInt(score2) || 0,
-      statut: 'terminee',
-      heureFin: new Date().toISOString()
-    })
+
+    await persistData('parties', partiesUpdated)
+
     
     // Mettre à jour les scores des équipes
     const partie = partiesUpdated.find(p => p.id === partieId)
@@ -220,10 +256,9 @@ function App() {
       })
       
       setEquipes(equipesUpdated)
-      const equipe1Updates = equipesUpdated.find(e => e.id === partie.equipe1.id)
-      const equipe2Updates = equipesUpdated.find(e => e.id === partie.equipe2.id)
-      if (equipe1Updates) await updateRow('equipes', equipe1Updates.id, equipe1Updates)
-      if (equipe2Updates) await updateRow('equipes', equipe2Updates.id, equipe2Updates)
+
+      await persistData('equipes', equipesUpdated)
+
     }
   }
 
@@ -608,9 +643,9 @@ function App() {
   )
 
   const renderConcoursView = () => {
-    const handleCreerConcours = () => {
+    const handleCreerConcours = async () => {
       if (nomConcours.trim()) {
-        creerConcours(nomConcours.trim(), dateConcours, nombreParties)
+        await creerConcours(nomConcours.trim(), dateConcours, nombreParties)
         setCurrentView('admin')
       }
     }
@@ -647,11 +682,13 @@ function App() {
                   </Badge>
                   
                   {concours.statut === 'en_cours' && (
-                    <Button 
-                      variant="destructive" 
-                      onClick={() => {
+                    <Button
+                      variant="destructive"
+                      onClick={async () => {
                         if (confirm('Êtes-vous sûr de vouloir terminer ce concours ?')) {
-                          setConcours({...concours, statut: 'termine'})
+                          const updated = { ...concours, statut: 'termine' }
+                          setConcours(updated)
+                          await persistData('concours', updated)
                         }
                       }}
                       className="w-full"
@@ -718,7 +755,7 @@ function App() {
   const renderEquipesView = () => {
     const joueursDisponibles = joueurs.filter(j => !j.arbitre) // Exclure seulement les arbitres
     
-    const formerEquipesAleatoires = () => {
+    const formerEquipesAleatoires = async () => {
       if (joueursDisponibles.length < 2) {
         alert('Il faut au moins 2 joueurs (non arbitres) pour former des équipes')
         return
@@ -754,13 +791,17 @@ function App() {
       })
       
       setEquipes(nouvellesEquipes)
-      nouvellesEquipes.forEach(e => insertRow('equipes', e))
+      await persistData('equipes', nouvellesEquipes)
+
     }
-    
-    const supprimerEquipe = (id) => {
+
+    const supprimerEquipe = async (id) => {
       if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
-        setEquipes(equipes.filter(e => e.id !== id))
-        deleteRow('equipes', id)
+
+        const updated = equipes.filter(e => e.id !== id)
+        setEquipes(updated)
+        await persistData('equipes', updated)
+
       }
     }
 
@@ -991,8 +1032,10 @@ function App() {
                       points: equipe.points
                     }))
                   }
-                  
-                  setArchives([...archives, nouvelleArchive])
+
+                  const updatedArchives = [...archives, nouvelleArchive]
+                  setArchives(updatedArchives)
+                  await persistData('archives', updatedArchives)
                   
                   // Réinitialiser pour un nouveau concours
                   setConcours(null)
@@ -1011,6 +1054,7 @@ function App() {
                   // Générer la partie suivante
                   const nouvellesParties = genererParties()
                   setParties(nouvellesParties)
+                  await persistData('parties', nouvellesParties)
                   setPartieActuelle(partieActuelle + 1)
                 }
               }}

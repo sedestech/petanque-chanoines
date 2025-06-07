@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Play, Plus, Trash2, Trophy } from 'lucide-react'
+import { saveRemoteData } from '../remoteStorage.js'
 
 export default function EquipesView({
   joueurs,
@@ -21,7 +22,7 @@ export default function EquipesView({
     (j) => !j.arbitre && !equipes.some((e) => e.joueurs.includes(j.pseudo))
   )
 
-  const formerEquipesAleatoires = () => {
+  const formerEquipesAleatoires = async () => {
     if (joueursRestants.length < 2) {
       alert('Il faut au moins 2 joueurs (non arbitres) pour former des équipes')
       return
@@ -40,16 +41,20 @@ export default function EquipesView({
       const equipeIndex = index % nombreEquipes
       nouvellesEquipes[equipeIndex].joueurs.push(joueur.pseudo)
     })
-    setEquipes([...equipes, ...nouvellesEquipes])
+    const updated = [...equipes, ...nouvellesEquipes]
+    setEquipes(updated)
+    await saveRemoteData('equipes', updated)
   }
 
-  const supprimerEquipe = (id) => {
+  const supprimerEquipe = async (id) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')) {
-      setEquipes(equipes.filter((e) => e.id !== id))
+      const updated = equipes.filter((e) => e.id !== id)
+      setEquipes(updated)
+      await saveRemoteData('equipes', updated)
     }
   }
 
-  const ajouterEquipeManuellement = () => {
+  const ajouterEquipeManuellement = async () => {
     if (nomEquipe.trim() && joueursSelectionnes.length > 0) {
       const joueursEquipe = joueursSelectionnes.map(
         (id) => joueurs.find((j) => j.id === id).pseudo
@@ -62,7 +67,9 @@ export default function EquipesView({
         points: 0,
         partiesJouees: 0,
       }
-      setEquipes([...equipes, nouvelleEquipe])
+      const updated = [...equipes, nouvelleEquipe]
+      setEquipes(updated)
+      await saveRemoteData('equipes', updated)
       setNomEquipe('')
       setJoueursSelectionnes([])
     }
