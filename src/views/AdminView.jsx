@@ -16,26 +16,32 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
           <Crown className="w-6 h-6 text-primary" />
         </div>
 
-        <Card>
-          <CardContent className="grid grid-cols-2 gap-4">
-            <Button onClick={() => setCurrentView('joueurs')} className="h-20 flex-col" variant="outline">
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-0">
+            <Button onClick={() => setCurrentView('joueurs')} className="h-20 flex-col w-full" variant="ghost">
               <Users className="w-6 h-6 mb-2" />
               Joueurs
             </Button>
-            <Button onClick={() => setCurrentView('concours')} className="h-20 flex-col" variant="outline">
+          </Card>
+          <Card className="p-0">
+            <Button onClick={() => setCurrentView('concours')} className="h-20 flex-col w-full" variant="ghost">
               <Trophy className="w-6 h-6 mb-2" />
               Concours
             </Button>
-            <Button onClick={() => setCurrentView('equipes')} className="h-20 flex-col" variant="outline">
+          </Card>
+          <Card className="p-0">
+            <Button onClick={() => setCurrentView('equipes')} className="h-20 flex-col w-full" variant="ghost">
               <Play className="w-6 h-6 mb-2" />
               Équipes
             </Button>
-            <Button onClick={() => setCurrentView('archives')} className="h-20 flex-col" variant="outline">
+          </Card>
+          <Card className="p-0">
+            <Button onClick={() => setCurrentView('archives')} className="h-20 flex-col w-full" variant="ghost">
               <Archive className="w-6 h-6 mb-2" />
               Archives
             </Button>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
 
         {concours && (
           <Card>
