@@ -115,6 +115,10 @@ The `package.json` defines a few scripts that can be run with pnpm:
 - `pnpm run preview` – serve the production build locally
 - `pnpm run lint` – run ESLint over the project files
 - `pnpm run test` – execute unit tests with Vitest
+## Fonctionnalités
+
+- La création des équipes peut se faire de manière automatique ou manuelle
+
 
 ## License
 
