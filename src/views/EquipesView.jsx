@@ -2,7 +2,6 @@ import React from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
-import { Input } from '@/components/ui/input.jsx'
 import { Play, Plus, Trash2, Trophy } from 'lucide-react'
 
 export default function EquipesView({

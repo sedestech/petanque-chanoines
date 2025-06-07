@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import PartieCard from '@/components/PartieCard.jsx'
-import { Play, Trophy } from 'lucide-react'
+import { Play } from 'lucide-react'
 
 export default function PartiesView({
   setCurrentView,
