@@ -83,14 +83,14 @@ export default function EquipesView({
           <h1 className="text-xl font-bold">Gestion des Équipes</h1>
           <Play className="w-6 h-6 text-primary" />
         </div>
-        {!concours ? (
+        {!concours && (
           <Card>
             <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">Créez d'abord un concours pour gérer les équipes</p>
+              <p className="text-center text-muted-foreground">Aucun concours en cours</p>
             </CardContent>
           </Card>
-        ) : (
-          <>
+        )}
+        <>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -189,7 +189,7 @@ export default function EquipesView({
                 )}
               </CardContent>
             </Card>
-            {equipes.length > 0 && (
+            {concours && equipes.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>Actions</CardTitle>
