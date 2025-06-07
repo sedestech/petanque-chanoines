@@ -11,6 +11,7 @@ import './App.css'
 import AdminView from '@/views/AdminView.jsx'
 import JoueurView from '@/views/JoueurView.jsx'
 import ArchivesView from '@/views/ArchivesView.jsx'
+import HomeView from '@/views/HomeView.jsx'
 import PartieCard from '@/components/PartieCard.jsx'
 
 
