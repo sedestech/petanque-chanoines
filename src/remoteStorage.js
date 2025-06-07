@@ -16,3 +16,20 @@ export async function saveRemoteData(key, value) {
     .from('petanque_data')
     .upsert({ key, value }, { onConflict: 'key' })
 }
+
+export function subscribeToRemoteData(key, callback) {
+  const channel = supabase
+    .channel(`petanque-data-${key}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'petanque_data', filter: `key=eq.${key}` },
+      (payload) => {
+        callback(payload.new ? payload.new.value : null)
+      }
+    )
+    .subscribe()
+
+  return () => {
+    supabase.removeChannel(channel)
+  }
+}

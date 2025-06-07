@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
 import { Checkbox } from '@/components/ui/checkbox.jsx'
 import { Modal } from '@/components/ui/modal.jsx'
-import { loadRemoteData, saveRemoteData } from './remoteStorage.js'
+import { loadRemoteData, saveRemoteData, subscribeToRemoteData } from './remoteStorage.js'
 import { Users, Trophy, Play, Settings, Archive, Crown, Plus, Edit, Trash2, Medal } from 'lucide-react'
 import './App.css'
 import AdminView from '@/views/AdminView.jsx'
@@ -53,6 +53,18 @@ function App() {
       setArchives(savedArchives)
     }
     fetchData()
+
+    const unsubscribers = [
+      subscribeToRemoteData('joueurs', setJoueurs),
+      subscribeToRemoteData('concours', setConcours),
+      subscribeToRemoteData('equipes', setEquipes),
+      subscribeToRemoteData('parties', setParties),
+      subscribeToRemoteData('archives', setArchives)
+    ]
+
+    return () => {
+      unsubscribers.forEach((unsub) => unsub())
+    }
   }, [])
 
   // Sauvegarde automatique
