@@ -120,7 +120,7 @@ function App() {
   const ajouterJoueur = () => {
     if (newJoueur.pseudo.trim()) {
       const joueur = {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         pseudo: newJoueur.pseudo.trim(),
         paye: newJoueur.paye,
         arbitre: newJoueur.arbitre
@@ -155,7 +155,7 @@ function App() {
 
   const creerConcours = (nom, date, nombreParties = 3, dureePartie = 20) => {
     const nouveauConcours = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       nom,
       date,
       statut: 'en_cours',
@@ -179,7 +179,7 @@ function App() {
     // Appariement des équipes consécutives au classement
     for (let i = 0; i < equipesTriees.length - 1; i += 2) {
       const partie = {
-        id: Date.now().toString() + i,
+        id: crypto.randomUUID(),
         numero: partieActuelle + 1,
         equipe1: equipesTriees[i],
         equipe2: equipesTriees[i + 1],
@@ -754,7 +754,7 @@ function App() {
       // Créer les équipes
       for (let i = 0; i < nombreEquipes; i++) {
         const equipe = {
-          id: Date.now().toString() + i,
+          id: crypto.randomUUID(),
           nom: `Équipe ${i + 1}`,
           joueurs: [],
           victoires: 0,
