@@ -35,22 +35,6 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
           </Button>
         </div>
 
-        {/* Avertissement synchronisation */}
-
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-4">
-            <div className="flex items-start space-x-2">
-              <div className="w-4 h-4 rounded-full bg-orange-500 mt-0.5 flex-shrink-0"></div>
-              <div className="text-sm">
-                <p className="font-medium text-orange-800">Information importante</p>
-                <p className="text-orange-700">
-                  Les données sont stockées localement sur chaque appareil. Pour que tous les joueurs voient les mêmes informations, ils doivent utiliser le même appareil ou navigateur.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {concours && (
           <Card>
             <CardHeader>
@@ -90,7 +74,6 @@ function AdminView({ setCurrentView, setIsArbitre, concours, equipes, parties, p
     </div>
   )
 }
-
 
 export default AdminView
 
