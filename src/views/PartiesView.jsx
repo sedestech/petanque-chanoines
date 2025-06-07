@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.j
 import { Badge } from '@/components/ui/badge.jsx'
 import PartieCard from '@/components/PartieCard.jsx'
 import { Play } from 'lucide-react'
-import { saveRemoteData } from '../remoteStorage.js'
+import { deleteRow } from '../remoteStorage.js'
 
 export default function PartiesView({
   setCurrentView,
@@ -21,12 +21,6 @@ export default function PartiesView({
   setEquipes,
   setConcours,
 }) {
-  async function persistData(key, value) {
-    const ok = await saveRemoteData(key, value)
-    if (!ok) {
-      alert(`Erreur lors de la sauvegarde de ${key}`)
-    }
-  }
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -107,9 +101,9 @@ export default function PartiesView({
                   setParties([])
                   setPartieActuelle(0)
                   setCurrentView('admin')
-                  persistData('concours', null)
-                  persistData('equipes', [])
-                  persistData('parties', [])
+                  deleteRow('concours', concours.id)
+                  equipes.forEach(e => deleteRow('equipes', e.id))
+                  parties.forEach(p => deleteRow('parties', p.id))
                   alert(`Concours "${concours.nom}" terminé et archivé !`)
                 } else {
                   const nouvellesParties = genererParties()

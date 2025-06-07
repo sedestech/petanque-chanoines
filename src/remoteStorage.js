@@ -1,39 +1,47 @@
 import { supabase } from './supabaseClient'
 
-export async function loadRemoteData(key, defaultValue) {
-  const { data, error } = await supabase
-    .from('petanque_data')
-    .select('value')
-    .eq('key', key)
-    .single()
-
-  if (error || !data) return defaultValue
-  return data.value
+export async function fetchRows(table) {
+  const { data, error } = await supabase.from(table).select('*')
+  if (error) {
+    console.error(`Failed to fetch ${table}`, error)
+    return []
+  }
+  return data || []
 }
 
-export async function saveRemoteData(key, value) {
-  const { error } = await supabase
-    .from('petanque_data')
-    .upsert({ key, value }, { onConflict: 'key' })
-
+export async function insertRow(table, row) {
+  const { error } = await supabase.from(table).insert(row)
   if (error) {
-    console.error(`Failed to save ${key} to Supabase`, error)
+    console.error(`Failed to insert into ${table}`, error)
     return false
   }
   return true
 }
 
+export async function updateRow(table, id, updates) {
+  const { error } = await supabase.from(table).update(updates).eq('id', id)
+  if (error) {
+    console.error(`Failed to update ${table}`, error)
+    return false
+  }
+  return true
+}
 
-export function subscribeToRemoteData(key, callback) {
+export async function deleteRow(table, id) {
+  const { error } = await supabase.from(table).delete().eq('id', id)
+  if (error) {
+    console.error(`Failed to delete from ${table}`, error)
+    return false
+  }
+  return true
+}
+
+export function subscribeToTable(table, callback) {
   const channel = supabase
-    .channel(`petanque-data-${key}`)
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'petanque_data', filter: `key=eq.${key}` },
-      (payload) => {
-        callback(payload.new ? payload.new.value : null)
-      }
-    )
+    .channel(`petanque-${table}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table }, () => {
+      fetchRows(table).then(callback)
+    })
     .subscribe()
 
   return () => {
